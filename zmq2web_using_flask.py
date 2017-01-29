@@ -5,6 +5,7 @@ from datetime import datetime
 import zmq
 
 _ZMQ_SUB_ADDR = 'tcp://localhost:12345'
+_ZMQ_REP_ADDR = 'tcp://localhost:12346'
 
 app = Flask(__name__)
 
@@ -18,7 +19,7 @@ def get_serial():
     zmq_sub_sock = context.socket(zmq.SUB)
     zmq_sub_sock.setsockopt(zmq.SUBSCRIBE, '')
     zmq_sub_sock.connect( _ZMQ_SUB_ADDR )
-    
+       
     poller = zmq.Poller()
     poller.register( zmq_sub_sock, zmq.POLLIN )
 
@@ -27,6 +28,20 @@ def get_serial():
         return zmq_sub_sock.recv()
     else:
         return 'flask.py: No data within 5 sec'
+
+        
+@app.route('/send_to_serial/<offset>')
+def send_to_serial(offset):
+    context = zmq.Context.instance()
+    zmq_req_sock = context.socket(zmq.REQ)
+    zmq_req_sock.connect( _ZMQ_REP_ADDR )
+    
+    zmq_req_sock.send(bytes(offset+'\r'))
+    print zmq_req_sock.recv()
+    
+    return 'OK'
+
+    
     
 
 def work(zmq_sub_addr):

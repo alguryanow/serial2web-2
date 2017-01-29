@@ -18,9 +18,35 @@ void setup() {
 }
 
 int count = 0;
+long offset = 0;
 
 void loop() {
-  String s = "Температура: " + String( readTemp(), DEC );
+  String s = "Температура: " + String( readTemp()+offset, DEC );
   Serial.println( s );
-  delay( 200 );
+  delay( 2000 );
+
+  s = getStringFromSerial();
+  if( s != "" ){
+    offset = s.toInt();
+  }
 }
+
+String inputString = "";
+String returnString = "";
+
+String getStringFromSerial()
+{
+  while( Serial.available() ){
+    char inChar = Serial.read();
+    if( inChar == '\r' || inChar == '\n' ){
+      String returnString = inputString;
+      inputString = "";
+      return returnString;
+    } else {
+      inputString += inChar;
+    }
+  }
+  return "";
+}
+
+

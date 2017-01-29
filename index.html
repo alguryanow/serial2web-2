@@ -38,6 +38,10 @@
         $('.fntSize').click(function() {
           $('body').css('font-size',$(this).html());
         });
+        
+        $('.btn').click(function() {
+            $.ajax("/send_to_serial/" + $('#offset').val());
+        })
       });
         
     </script>
@@ -53,6 +57,15 @@
       <div style="text-align: center" id="data">
         Пока нет данных
       </div>
+      
+      <form class="form-inline">
+        <div class="form-group">
+            <label for="offset">Смещение:</label>
+            <input class="form-control" id="offset">
+        </div>
+        <input class="btn btn-info" value="Послать">
+      </form>
+      
     </div>
   </div>
 
